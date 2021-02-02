@@ -1,4 +1,4 @@
-package ru.rybinskov.task2;
+    package ru.rybinskov.task2;
 
 /**
  * Комментарии по ошибкам:
@@ -19,6 +19,8 @@ package ru.rybinskov.task2;
  *    start, stop), также любая машина имеет цвет и название. В связи с этим, в абстрактный класс Car
  *    был добавлен конструктор для того, чтобы любой потомок был обязан указать эти аргументы при создании объекта.
  *
+ * 6) Инсправлены орфографические ошибки.
+ *
  *
  * Варианты оптимизации:
  * 1) В двух классах мы видим одинаковую реализацию метода move интерфейса Moveable, имеет смысл
@@ -32,13 +34,13 @@ package ru.rybinskov.task2;
  *
  */
 
-interface Moveable {
+interface Movable {
     default void move() {
         System.out.println("car is moving");
     }
 }
 
-interface Stopable {
+interface Stoppable {
     void stop();
 }
 
@@ -84,7 +86,7 @@ abstract class Car {
     }
 }
 
-class LightWeightCar extends Car implements Moveable {
+class LightWeightCar extends Car implements Movable {
 
     public LightWeightCar(Engine engine, String color, String name) {
         super(engine, color, name);
@@ -97,7 +99,7 @@ class LightWeightCar extends Car implements Moveable {
 
 }
 
-class Lorry extends Car implements Moveable, Stopable {
+class Lorry extends Car implements Movable, Stoppable {
 
 
     public Lorry(Engine engine, String color, String name) {
