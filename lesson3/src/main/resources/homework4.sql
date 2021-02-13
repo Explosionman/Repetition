@@ -45,11 +45,36 @@ values (200, 22, '2021-02-12 09:00:00', 1),
 
 
 -- Задание 1. Ошибки в расписании (фильмы накладываются друг на друга), отсортированные по возрастанию времени.
-select a.fiml1,
-       a.film1_time,
-       a.film1_duration,
-       b.film2_time,
-       b.film2_time - a.film1_time as break_time
+select a.title as "Фильм 1",
+       a.film1_start as "Время начала",
+       a.film1_duration as "Длительность",
+       b.title as "Фильм 2",
+       b.film2_start as "Время начала",
+       b.film2_duration as "Длительность"
+from (
+         select f.title_fld as title, m.start_datetime_fld as film1_start, f.duration_fld as film1_duration,
+                m.start_datetime_fld + (concat(f.duration_fld::text, ' minutes'))::interval as film1_end
+         from films_tbl as f
+                  join movie_schedule_tbl as m on (f.id = m.film_id)
+     ) a
+         cross join
+     (
+         select f.title_fld as title, m.start_datetime_fld as film2_start, f.duration_fld as film2_duration,
+                m.start_datetime_fld + (concat(f.duration_fld::text, ' minutes'))::interval as film2_end
+         from films_tbl as f
+                  join movie_schedule_tbl as m on (f.id = m.film_id)
+     ) b
+where a.film1_start between b.film2_start and b.film2_end
+  and a.title != b.title
+order by a.film1_start;
+
+
+-- Задание 2. Перерывы 30 минут и более между фильмами — выводить по уменьшению длительности перерыва.
+select a.fiml1 as "Фильм 1",
+       a.film1_time as "Время начала",
+       a.film1_duration as "Длительность",
+       b.film2_time as "Фильм 2",
+       b.film2_time - a.film1_time as "Длительность перерыва"
 from (
          select f.title_fld as fiml1, m.start_datetime_fld as film1_time, f.duration_fld as film1_duration
          from films_tbl as f
@@ -62,64 +87,46 @@ from (
      ) b
 where a.film1_time < b.film2_time
   and (b.film2_time - a.film1_time) >= interval '30 minutes'
-order by break_time desc;
-
-
--- Задание 2. Перерывы 30 минут и более между фильмами — выводить по уменьшению длительности перерыва.
-select a.fiml1,
-       a.film1_time,
-       a.film1_duration,
-       b.film2_time,
-       b.film2_time - a.film1_time as break_time
-from (
-         select f.title_fld as fiml1, m.start_datetime_fld as film1_time, f.duration_fld as film1_duration
-         from films_tbl as f
-                  join movie_schedule_tbl as m on (f.id = m.film_id)
-     ) a
-         cross join
-     (
-         select m.start_datetime_fld as film2_time
-         from movie_schedule_tbl as m
-     ) b
-where a.film1_time <= b.film2_time
-order by break_time desc;
+order by "Длительность перерыва" desc;
 
 -- Задание 3. Cписок фильмов, для каждого — с указанием общего числа посетителей за все время, среднего числа зрителей
 --            за сеанс и общей суммы сборов по каждому фильму (отсортировать по убыванию прибыли).
 
 
 -- не смог додуматься,  как отфильтровать итоговые суммы, при этом оставить поле "Итого" внизу"
-SELECT COALESCE(title, 'Итого: ') as title,
-       sum(a.visitors)            as total_visitors,
-       avg(a.visitors)::int       as avg_visitors,
-       sum(a.visitors * a.price)  as total_sum
+SELECT COALESCE(title, 'Итого: ') as "Название фильма",
+       sum(a.visitors)            as "Посетители за всё время",
+       avg(a.visitors)::int       as "Среднее число зрителей",
+       sum(a.visitors * a.price)  as "Сумма сборов"
 from (
          select f.title_fld as title, m.visitors_fld as visitors, m.price_fld as price
          from films_tbl as f
                   join movie_schedule_tbl as m on (f.id = m.film_id)
      ) a
 group by grouping sets ( title, ())
-order by total_sum;
+order by "Сумма сборов";
 
 -- Задание 4. Число посетителей и кассовые сборы, сгруппированные по времени начала фильма:
 -- с 9 до 15, с 15 до 18, с 18 до 21, с 21 до 00:00 (сколько посетителей пришло с 9 до 15 часов и т.д.).
 
-select sum(a.visitors) as visitors, sum(a.price * visitors) as money, a.start_datetime_fld as time
+select sum(a.visitors)         as "Кол-во посетителей",
+       sum(a.price * visitors) as "Кассовые сборы",
+       a.start_datetime_fld    as "Временные интервалы"
 from (
          select m.visitors_fld as visitors,
                 m.price_fld    as price,
                 case
                     when m.start_datetime_fld >= '2021-02-12 08:59:59' and m.start_datetime_fld < '2021-02-12 15:00:00'
-                        then 'from 09 to 15'
+                        then 'с 09:00 до 15:00'
                     when m.start_datetime_fld >= '2021-02-12 15:00:00' and m.start_datetime_fld < '2021-02-12 18:00:00'
-                        then 'from 15 to 18'
+                        then 'с 15:00 до 18:00'
                     when m.start_datetime_fld >= '2021-02-12 18:00:00' and m.start_datetime_fld < '2021-02-12 21:00:00'
-                        then 'from 18 to 21'
+                        then 'с 18:00 до 21:00'
                     when m.start_datetime_fld >= '2021-02-12 21:00:00' and m.start_datetime_fld < '2021-02-13 00:00:00'
-                        then 'from 21 to 24'
+                        then 'с 21:00 до 24:00'
                     END           start_datetime_fld
          from movie_schedule_tbl as m
          group by (visitors, price, start_datetime_fld)
      ) a
 group by (a.start_datetime_fld)
-order by time
+order by "Временные интервалы"
