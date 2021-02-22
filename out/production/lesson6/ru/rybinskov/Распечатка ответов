@@ -1,0 +1,52 @@
+HTTP/1.1 201
+Content-Type: application/json;charset=UTF-8
+Transfer-Encoding: chunked
+Date: Mon, 22 Feb 2021 22:39:06 GMT
+Connection: close
+
+---- Received data ----
+
+1a
+{"description":"new film"}
+0
+
+------------------------------------------------
+
+HTTP/1.1 200
+Content-Type: application/json;charset=UTF-8
+Transfer-Encoding: chunked
+Date: Mon, 22 Feb 2021 22:39:06 GMT
+Connection: close
+
+---- Received data ----
+
+22
+{"description":"test description"}
+0
+
+------------------------------------------------
+
+HTTP/1.1 200
+Content-Type: text/plain;charset=UTF-8
+Content-Length: 56
+Date: Mon, 22 Feb 2021 22:39:06 GMT
+Connection: close
+
+---- Received data ----
+
+Получаем кино по GET-мапингу /movie
+------------------------------------------------
+
+HTTP/1.1 200
+Content-Type: text/plain;charset=UTF-8
+Content-Length: 57
+Date: Mon, 22 Feb 2021 22:39:06 GMT
+Connection: close
+
+---- Received data ----
+
+Получаем кино по POST-мапингу /movie
+------------------------------------------------
+
+
+Process finished with exit code 0
