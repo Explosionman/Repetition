@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Products</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+
+
+
+<h1 align="center">Edit student</h1>
+<br>
+
+<form th:action="@{/students/edit}" th:object="${student}" method="post">
+    <table border="1">
+        <tr>
+            <td hidden><input type="number" name="id" th:field="*{id}"/></td>
+        </tr>
+        <tr>
+            <td>Name</td>
+            <td><input type="text" name="name" th:field="*{name}"/></td>
+        </tr>
+        <tr>
+            <td>Age</td>
+            <td><input type="number" name="age" th:field="*{age}"/></td>
+        </tr>
+    </table>
+    <button type="submit">save changes</button>
+</form>
+<hr>
+<br>
+<h6 align="center">...</h6>
+
+</body>
+</html>
