@@ -1,10 +1,11 @@
- spring:
-    jpa:
-      hibernate:
-        ddl-auto: create-drop
-    datasource:
-      url: jdbc:postgresql://localhost:5432/test
-      username: postgres
-      password: password
-    flyway:
-      baseline-on-migrate: true
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      dialect: org.hibernate.dialect.PostgreSQL95Dialect
+  datasource:
+    url: jdbc:postgresql://localhost:5432/test
+    username: postgres
+    password: n7g2phk2
+  flyway:
+    baseline-on-migrate: true
